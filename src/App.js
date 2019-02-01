@@ -5,6 +5,7 @@ import './App.css';
 
 // Toast notification dependencies
 import { ToastContainer, toast } from 'react-toastify';
+const baseURL = 'http://joes-autos.herokuapp.com/api';
 
 class App extends Component {
   constructor(props) {
@@ -31,6 +32,12 @@ class App extends Component {
   getVehicles() {
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    axios.get(`${baseURL}/vehicles`).then(results => {
+      toast.success("Succesfully got vehicles.");
+      this.setState({
+        'vehiclesToDisplay': results.data.vehicles,
+      });
+    }).catch( () => toast.error("Failed at fetching vehicles."))
   }
 
   getPotentialBuyers() {
@@ -41,6 +48,11 @@ class App extends Component {
   sellCar(id) {
     // axios (DELETE)
     // setState with response -> vehiclesToDisplay
+    axios.delete(`${baseURL}/vehicles/${id}`).then(results => {
+      toast.success("Good sale");
+      this.setState({"vehiclesToDisplay": results.data.vehicles});
+
+    }).catch(() => toast.error('Sale didnt work'))
   }
 
   filterByMake() {
@@ -60,9 +72,16 @@ class App extends Component {
   updatePrice(priceChange, id) {
     // axios (PUT)
     // setState with response -> vehiclesToDisplay
+    axios.put(`${baseURL}/vehicles/${id}/${priceChange}`).then( results => {
+      toast.success('Updating the price was a success!');
+      this.setState({
+        'vehiclesToDisplay': results.data.vehicles,
+      });
+    }).catch('The price change did not succeed.')
   }
 
   addCar() {
+    
     let newCar = {
       make: this.make.value,
       model: this.model.value,
@@ -73,6 +92,10 @@ class App extends Component {
 
     // axios (POST)
     // setState with response -> vehiclesToDisplay
+    axios.post(`${baseURL}/vehicles`, newCar).then(result => {
+      toast.success("Creating a new car was a success!");
+      this.setState({'vehiclesToDisplay': result.data.vehicles});
+    }).catch(() => toast.error('Create a new car failed!'));
   }
 
   addBuyer() {
